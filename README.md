@@ -6,7 +6,7 @@
 * ngx-translate-router-http-loader
 [![npm version](https://badge.fury.io/js/ngx-translate-router-http-loader.svg)](https://badge.fury.io/js/ngx-translate-router-http-loader)
 
-**Fork of [localize-router](https://github.com/Greentube/localize-router).**
+**Fork of [localize-router](https://github.com/Greentube/localize-router) and [@gilsdav/ngx-localize-router](https://github.com/gilsdav/ngx-translate-router)**
 
 Based on and extension of [ngx-translate](https://github.com/ngx-translate/core).
 
