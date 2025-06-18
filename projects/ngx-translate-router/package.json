@@ -1,8 +1,8 @@
 {
-  "name": "ngx-translate-router-http-loader",
+  "name": "ngx-translate-router",
   "version": "20.0.6",
   "homepage": "https://github.com/ruizmarc/ngx-translate-router#readme",
-  "description": "An Angular library that provides a way to load translations through HTTP to translate routes.",
+  "description": "An Angular library that provides a way to translate routes using ngx-translate.",
   "license": "MIT",
   "author": {
     "name": "Marc Ruiz",
@@ -13,8 +13,8 @@
     "url": "git+https://github.com/ruizmarc/ngx-translate-router.git"
   },
   "scripts": {
-    "build": "npx ng build --configuration production ngx-translate-router-http-loader && cp ../../README.md ../../dist/ngx-translate-router-http-loader",
-    "publish": "npm run build && cd ../../dist/ngx-translate-router-http-loader && npm publish"
+    "build": "npx ng build --configuration production ngx-translate-router && cp ../../README.md ../../dist/ngx-translate-router",
+    "publish": "npm run build && cd ../../dist/ngx-translate-router && npm publish"
   },
   "peerDependencies": {
     "ngx-translate-router": ">=20.0.0",

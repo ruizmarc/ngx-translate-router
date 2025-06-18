@@ -4,9 +4,9 @@
   "scripts": {
     "ng": "npx ng",
     "start": "npx ng serve",
-    "build": "npm run build:main && npm run build:http-loader",
-    "build:main": "npx ng build --configuration production ngx-translate-router",
-    "build:http-loader": "npx ng build --configuration production ngx-translate-router-http-loader",
+    "build:libraries": "npm run build:translate-router && npm run build:http-loader",
+    "build:translate-router": "cd projects/ngx-translate-router && npm run build",
+    "build:http-loader": "cd projects/ngx-translate-router-http-loader && npm run build",
     "test": "npx ng test",
     "lint": "npx ng lint",
     "e2e": "npx ng e2e"
