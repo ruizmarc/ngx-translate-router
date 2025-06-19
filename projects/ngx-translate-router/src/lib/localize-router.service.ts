@@ -33,17 +33,17 @@ export class LocalizeRouterService {
    * CTOR
    */
   constructor(
-      @Inject(LocalizeParser) public parser: LocalizeParser,
-      @Inject(LocalizeRouterSettings) public settings: LocalizeRouterSettings,
-      @Inject(Router) private router: Router,
-      @Inject(ActivatedRoute) private route: ActivatedRoute
-    ) {
-      this.routerEvents = new Subject<string>();
-      const initializedSubject = new ReplaySubject<boolean>(1);
-      this.hooks = {
-        _initializedSubject: initializedSubject,
-        initialized: initializedSubject.asObservable()
-      };
+    @Inject(LocalizeParser) public parser: LocalizeParser,
+    @Inject(LocalizeRouterSettings) public settings: LocalizeRouterSettings,
+    @Inject(Router) private router: Router,
+    @Inject(ActivatedRoute) private route: ActivatedRoute
+  ) {
+    this.routerEvents = new Subject<string>();
+    const initializedSubject = new ReplaySubject<boolean>(1);
+    this.hooks = {
+      _initializedSubject: initializedSubject,
+      initialized: initializedSubject.asObservable()
+    };
   }
 
   /**
@@ -69,61 +69,62 @@ export class LocalizeRouterService {
    */
   changeLanguage(lang: string, extras?: NavigationExtras, useNavigateMethod?: boolean): void {
 
-    if (lang !== this.parser.currentLang) {
-      const rootSnapshot: ActivatedRouteSnapshot = this.router.routerState.snapshot.root;
-
-      this.parser.translateRoutes(lang).subscribe(() => {
-
-        let url = this.traverseRouteSnapshot(rootSnapshot);
-        url = this.translateRoute(url) as string;
-
-        if (!this.settings.alwaysSetPrefix) {
-          let urlSegments = url.split('/');
-          const languageSegmentIndex = urlSegments.indexOf(this.parser.currentLang);
-          // If the default language has no prefix make sure to remove and add it when necessary
-          if (this.parser.currentLang === this.parser.defaultLang) {
-            // Remove the language prefix from url when current language is the default language
-            if (languageSegmentIndex === 0 || (languageSegmentIndex === 1 && urlSegments[0] === '')) {
-              // Remove the current aka default language prefix from the url
-              urlSegments = urlSegments.slice(0, languageSegmentIndex).concat(urlSegments.slice(languageSegmentIndex + 1));
-            }
-          } else {
-            // When coming from a default language it's possible that the url doesn't contain the language, make sure it does.
-            if (languageSegmentIndex === -1) {
-              // If the url starts with a slash make sure to keep it.
-              const injectionIndex = urlSegments[0] === '' ? 1 : 0;
-              urlSegments = urlSegments.slice(0, injectionIndex).concat(this.parser.currentLang, urlSegments.slice(injectionIndex));
-            }
-          }
-          url = urlSegments.join('/');
-        }
-
-        // Prevent multiple "/" character
-        url = url.replace(/\/+/g, '/');
-
-        const lastSlashIndex = url.lastIndexOf('/');
-        if (lastSlashIndex > 0 && lastSlashIndex === url.length - 1) {
-          url = url.slice(0, -1);
-        }
-
-        const queryParamsObj = this.parser.chooseQueryParams(extras, this.route.snapshot.queryParams);
-
-        this.applyConfigToRouter(this.parser.routes);
-
-        this.lastExtras = extras;
-        if (useNavigateMethod) {
-          const extrasToApply: NavigationExtras = extras ? {...extras} : {};
-          if (queryParamsObj) {
-            extrasToApply.queryParams = queryParamsObj;
-          }
-          this.router.navigate([url], extrasToApply);
-        } else {
-          let queryParams = this.parser.formatQueryParams(queryParamsObj);
-          queryParams = queryParams ? `?${queryParams}` : '';
-          this.router.navigateByUrl(`${url}${queryParams}`, extras);
-        }
-      });
+    if (lang === this.parser.currentLang) {
+      return;
     }
+    const rootSnapshot: ActivatedRouteSnapshot = this.router.routerState.snapshot.root;
+
+    this.parser.translateRoutes(lang).subscribe(() => {
+
+      let url = this.traverseRouteSnapshot(rootSnapshot);
+      url = this.translateRoute(url) as string;
+
+      if (!this.settings.alwaysSetPrefix) {
+        let urlSegments = url.split('/');
+        const languageSegmentIndex = urlSegments.indexOf(this.parser.currentLang);
+        // If the default language has no prefix make sure to remove and add it when necessary
+        if (this.parser.currentLang === this.parser.defaultLang) {
+          // Remove the language prefix from url when current language is the default language
+          if (languageSegmentIndex === 0 || (languageSegmentIndex === 1 && urlSegments[0] === '')) {
+            // Remove the current aka default language prefix from the url
+            urlSegments = urlSegments.slice(0, languageSegmentIndex).concat(urlSegments.slice(languageSegmentIndex + 1));
+          }
+        } else {
+          // When coming from a default language it's possible that the url doesn't contain the language, make sure it does.
+          if (languageSegmentIndex === -1) {
+            // If the url starts with a slash make sure to keep it.
+            const injectionIndex = urlSegments[0] === '' ? 1 : 0;
+            urlSegments = urlSegments.slice(0, injectionIndex).concat(this.parser.currentLang, urlSegments.slice(injectionIndex));
+          }
+        }
+        url = urlSegments.join('/');
+      }
+
+      // Prevent multiple "/" character
+      url = url.replace(/\/+/g, '/');
+
+      const lastSlashIndex = url.lastIndexOf('/');
+      if (lastSlashIndex > 0 && lastSlashIndex === url.length - 1) {
+        url = url.slice(0, -1);
+      }
+
+      const queryParamsObj = this.parser.chooseQueryParams(extras, this.route.snapshot.queryParams);
+
+      this.applyConfigToRouter(this.parser.routes);
+
+      this.lastExtras = extras;
+      if (useNavigateMethod) {
+        const extrasToApply: NavigationExtras = extras ? { ...extras } : {};
+        if (queryParamsObj) {
+          extrasToApply.queryParams = queryParamsObj;
+        }
+        this.router.navigate([url], extrasToApply);
+      } else {
+        let queryParams = this.parser.formatQueryParams(queryParamsObj);
+        queryParams = queryParams ? `?${queryParams}` : '';
+        this.router.navigateByUrl(`${url}${queryParams}`, extras);
+      }
+    });
   }
 
   /**
@@ -167,7 +168,7 @@ export class LocalizeRouterService {
   }
 
   private parseSegmentValueMatcher(snapshot: ActivatedRouteSnapshot): string[] {
-    const localizeMatcherParams = snapshot.data && snapshot.data.localizeMatcher && snapshot.data.localizeMatcher.params || { };
+    const localizeMatcherParams = snapshot.data && snapshot.data.localizeMatcher && snapshot.data.localizeMatcher.params || {};
     const subPathSegments: string[] = snapshot.url
       .map((segment: LocalizedMatcherUrlSegment) => {
         const currentPath = segment.path;

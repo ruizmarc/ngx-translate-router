@@ -1,9 +1,9 @@
 import { Routes, Route, NavigationExtras, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, Observable, Observer } from 'rxjs';
-import { Location } from '@angular/common';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { CacheMechanism, LocalizeRouterSettings } from './localize-router.config';
-import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT, inject, Inject, Injectable, PLATFORM_ID, REQUEST } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 
 const COOKIE_EXPIRY = 30; // 1 month
@@ -24,6 +24,10 @@ export abstract class LocalizeParser {
   private _translationObject: any;
   private _wildcardRoute: Route;
   private _languageRoute: Route;
+
+  private request = inject(REQUEST);
+  private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
 
   /**
    * Loader constructor
@@ -46,7 +50,6 @@ export abstract class LocalizeParser {
   protected init(routes: Routes): Promise<any> {
     let selectedLanguage: string;
 
-    // this.initRoutes(routes);
     this.routes = routes;
 
     if (!this.locales || !this.locales.length) {
@@ -61,6 +64,7 @@ export abstract class LocalizeParser {
     } else {
       this.defaultLang = this._cachedLang || browserLang || this.locales[0];
     }
+
     selectedLanguage = locationLang || this.defaultLang;
     this.translate.setDefaultLang(this.defaultLang);
 
@@ -126,7 +130,6 @@ export abstract class LocalizeParser {
       if (this._languageRoute) {
         this._languageRoute.path = language;
       }
-
       this.translate.use(language).subscribe((translations: any) => {
         this._translationObject = translations;
         this.currentLang = language;
@@ -170,6 +173,7 @@ export abstract class LocalizeParser {
       if (route.children) {
         this._translateRouteTree(route.children);
       }
+      console.log('route', route.loadChildren, route['_loadedRoutes']);
       if (route.loadChildren && (<any>route)._loadedRoutes?.length) {
         this._translateRouteTree((<any>route)._loadedRoutes);
       }
@@ -277,7 +281,7 @@ export abstract class LocalizeParser {
       return this._cacheWithSessionStorage();
     }
     if (this.settings.cacheMechanism === CacheMechanism.Cookie) {
-      return this._cacheWithCookies();
+      return this._getCookieValue();
     }
   }
 
@@ -295,7 +299,7 @@ export abstract class LocalizeParser {
       this._cacheWithSessionStorage(value);
     }
     if (this.settings.cacheMechanism === CacheMechanism.Cookie) {
-      this._cacheWithCookies(value);
+      this._setCookieValue(value);
     }
   }
 
@@ -339,32 +343,28 @@ export abstract class LocalizeParser {
   /**
    * Cache value via cookies
    */
-  private _cacheWithCookies(value?: string): string {
-    try {
-      if (typeof document === 'undefined' || typeof document.cookie === 'undefined') {
-        return;
-      }
-      const name = encodeURIComponent(this.settings.cacheName);
-      if (value) {
-        let cookieTemplate = `${this.settings.cookieFormat}`;
-        cookieTemplate = cookieTemplate
-          .replace('{{value}}', `${name}=${encodeURIComponent(value)}`)
-          .replace(/{{expires:?(\d+)?}}/g, (fullMatch, groupMatch) => {
-            const days = groupMatch === undefined ? COOKIE_EXPIRY : parseInt(groupMatch, 10);
-            const date: Date = new Date();
-            date.setTime(date.getTime() + days * 86400000);
-            return `expires=${date.toUTCString()}`;
-          });
-
-        document.cookie = cookieTemplate;
-        return;
-      }
-      const regexp = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
-      const result = regexp.exec(document.cookie);
-      return decodeURIComponent(result[1]);
-    } catch (e) {
-      return; // should not happen but better safe than sorry (can happen by using domino)
+  private _setCookieValue(value: string): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
     }
+    const name = encodeURIComponent(this.settings.cacheName);
+    const cookieString = (this.settings.cookieFormat ?? '')
+      .replace('{{value}}', `${name}=${encodeURIComponent(value)}`)
+      .replace(/{{expires:?(\d+)?}}/g, (fullMatch, groupMatch) => {
+        const days = groupMatch === undefined ? COOKIE_EXPIRY : parseInt(groupMatch, 10);
+        const date: Date = new Date();
+        date.setTime(date.getTime() + days * 86400000);
+        return `expires=${date.toUTCString()}`;
+      });
+    this.document.cookie = cookieString;
+  }
+
+  private _getCookieValue(): string {
+    const name = encodeURIComponent(this.settings.cacheName);
+    const regexp = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
+    const cookie = isPlatformBrowser(this.platformId) ? this.document.cookie : this.request?.headers.get('cookie') ?? '';
+    const result = regexp.exec(cookie);
+    return result ? decodeURIComponent(result[1]) : null;
   }
 
   /**

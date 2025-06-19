@@ -1,15 +1,15 @@
 {
-    "TITLE": "coucou",
-    "ROUTES.home": "acceuil",
-    "ROUTES.test": "testounet",
-    "ROUTES.bob": "bobie",
-    "ROUTES.yoyo": "yoyo",
-    "ROUTES.sub": "sous",
-    "ROUTES.map": "carte",
-    "ROUTES.matcher": "monmatcher",
-    "ROUTES.conditionalRedirectTo": "redirectionConditionnelle",
-    "CHANGE_LANGUAGE": "Changer de langue",
-    "GO_HOME": "Retourner à l'accueil",
-    "DEFAULT_TITLE": "Mon titre",
-    "HOME_TITLE": "Acceuil"
+  "TITLE": "coucou",
+  "ROUTES.home": "acceuil",
+  "ROUTES.test": "testounet",
+  "ROUTES.bob": "bobie",
+  "ROUTES.yoyo": "yoyo",
+  "ROUTES.sub": "sous",
+  "ROUTES.map": "carte",
+  "ROUTES.matcher": "monmatcher",
+  "ROUTES.conditionalRedirectTo": "redirectionConditionnelle",
+  "CHANGE_LANGUAGE": "Changer de langue",
+  "GO_HOME": "Retourner à l'accueil",
+  "DEFAULT_TITLE": "Mon titre",
+  "HOME_TITLE": "Acceuil"
 }

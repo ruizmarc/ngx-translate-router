@@ -1,15 +1,15 @@
 {
-    "TITLE": "hello",
-    "ROUTES.home": "home",
-    "ROUTES.test": "mytest",
-    "ROUTES.bob": "george",
-    "ROUTES.yoyo": "yaya",
-    "ROUTES.sub": "sub",
-    "ROUTES.map": "map",
-    "ROUTES.matcher": "mymatcher",
-    "ROUTES.conditionalRedirectTo": "trConditionalRedirectTo",
-    "CHANGE_LANGUAGE": "Change language",
-    "GO_HOME": "Go home",
-    "DEFAULT_TITLE": "My title",
-    "HOME_TITLE": "Home"
+  "TITLE": "hello",
+  "ROUTES.home": "home",
+  "ROUTES.test": "mytest",
+  "ROUTES.bob": "george",
+  "ROUTES.yoyo": "yaya",
+  "ROUTES.sub": "sub",
+  "ROUTES.map": "map",
+  "ROUTES.matcher": "mymatcher",
+  "ROUTES.conditionalRedirectTo": "trConditionalRedirectTo",
+  "CHANGE_LANGUAGE": "Change language",
+  "GO_HOME": "Go home",
+  "DEFAULT_TITLE": "My title",
+  "HOME_TITLE": "Home"
 }

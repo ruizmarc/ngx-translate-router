@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "npx ng build --configuration production ngx-translate-router && cp ../../README.md ../../dist/ngx-translate-router",
+    "build:watch": "npx ng build --watch --configuration production ngx-translate-router",
     "publish": "npm run build && cd ../../dist/ngx-translate-router && npm publish"
   },
   "peerDependencies": {
